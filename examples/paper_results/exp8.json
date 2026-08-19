@@ -1,0 +1,249 @@
+{
+  "seed": 20260819,
+  "n_per_group": 500,
+  "extreme_definition_deg": {
+    "low": 30.0,
+    "high": 60.0
+  },
+  "n_extreme_directions": 97,
+  "main_sample": {
+    "pt": {
+      "ent": {
+        "n": 500,
+        "extreme_energy_mean": 0.4452980262432375,
+        "extreme_energy_std": 0.04013364474198171,
+        "own_extreme_energy_mean": 0.2785718809750007,
+        "theta_mean": 42.27223498075626,
+        "theta_std": 1.4063122166213966
+      },
+      "com": {
+        "n": 500,
+        "extreme_energy_mean": 0.4377925295167014,
+        "extreme_energy_std": 0.0384538043067452,
+        "own_extreme_energy_mean": 0.2843091875841834,
+        "theta_mean": 41.959480305713335,
+        "theta_std": 1.4158852245034388
+      },
+      "welch_t_extreme_energy_ent_vs_com": 3.019444520289422,
+      "welch_p": 0.0025323866938991024
+    },
+    "en": {
+      "ent": {
+        "n": 500,
+        "extreme_energy_mean": 0.4285769824626674,
+        "extreme_energy_std": 0.034953662386856425,
+        "own_extreme_energy_mean": 0.1555187461149846,
+        "theta_mean": 42.333224637744266,
+        "theta_std": 1.0262153136050467
+      },
+      "com": {
+        "n": 500,
+        "extreme_energy_mean": 0.4310312949166345,
+        "extreme_energy_std": 0.03612041066608461,
+        "own_extreme_energy_mean": 0.16379395959466092,
+        "theta_mean": 42.66187990952314,
+        "theta_std": 1.2184685597738032
+      },
+      "welch_t_extreme_energy_ent_vs_com": -1.091842856728854,
+      "welch_p": 0.27490217808046835
+    }
+  },
+  "frequency_matched_sample": {
+    "pt": {
+      "ent": {
+        "n": 500,
+        "extreme_energy_mean": 0.4425606594924741,
+        "extreme_energy_std": 0.04034487708730582,
+        "own_extreme_energy_mean": 0.2745214251622064,
+        "theta_mean": 42.430245016785214,
+        "theta_std": 1.4264632262061994
+      },
+      "com": {
+        "n": 500,
+        "extreme_energy_mean": 0.4402099039672236,
+        "extreme_energy_std": 0.03730403418718664,
+        "own_extreme_energy_mean": 0.2845052678899463,
+        "theta_mean": 41.96648313319769,
+        "theta_std": 1.347490274724508
+      },
+      "welch_t_extreme_energy_ent_vs_com": 0.9566197191751825,
+      "welch_p": 0.3387592321047934
+    },
+    "en": {
+      "ent": {
+        "n": 500,
+        "extreme_energy_mean": 0.4287530303979087,
+        "extreme_energy_std": 0.03510246773523847,
+        "own_extreme_energy_mean": 0.15624454528959952,
+        "theta_mean": 42.35209349837473,
+        "theta_std": 1.0226414696539698
+      },
+      "com": {
+        "n": 500,
+        "extreme_energy_mean": 0.43190895129572493,
+        "extreme_energy_std": 0.036640468855986215,
+        "own_extreme_energy_mean": 0.16472452213515298,
+        "theta_mean": 42.658720086013076,
+        "theta_std": 1.1731686711832392
+      },
+      "welch_t_extreme_energy_ent_vs_com": -1.3907439767769596,
+      "welch_p": 0.16430307697041746
+    }
+  },
+  "top15_own_extreme": {
+    "pt": [
+      {
+        "word": "construídos",
+        "group": "comum",
+        "own_extreme_energy": 0.41147539201232336
+      },
+      {
+        "word": "diminuição",
+        "group": "comum",
+        "own_extreme_energy": 0.39523380513382306
+      },
+      {
+        "word": "baviera",
+        "group": "comum",
+        "own_extreme_energy": 0.3924918859620881
+      },
+      {
+        "word": "olho",
+        "group": "comum",
+        "own_extreme_energy": 0.38522620434646093
+      },
+      {
+        "word": "companheiro",
+        "group": "comum",
+        "own_extreme_energy": 0.3847302844228343
+      },
+      {
+        "word": "avisos",
+        "group": "comum",
+        "own_extreme_energy": 0.381240348027289
+      },
+      {
+        "word": "barra",
+        "group": "comum",
+        "own_extreme_energy": 0.378584700063182
+      },
+      {
+        "word": "procurar",
+        "group": "comum",
+        "own_extreme_energy": 0.3780308793636591
+      },
+      {
+        "word": "mostradas",
+        "group": "entidade",
+        "own_extreme_energy": 0.37060606691989806
+      },
+      {
+        "word": "nascidos",
+        "group": "entidade",
+        "own_extreme_energy": 0.36748506141323445
+      },
+      {
+        "word": "telenovela",
+        "group": "comum",
+        "own_extreme_energy": 0.36717133066088026
+      },
+      {
+        "word": "mudaram",
+        "group": "entidade",
+        "own_extreme_energy": 0.3661336870959735
+      },
+      {
+        "word": "conjuntos",
+        "group": "comum",
+        "own_extreme_energy": 0.3660295758970019
+      },
+      {
+        "word": "retirando",
+        "group": "entidade",
+        "own_extreme_energy": 0.3656276552850558
+      },
+      {
+        "word": "duquesa",
+        "group": "comum",
+        "own_extreme_energy": 0.36410989054666665
+      }
+    ],
+    "en": [
+      {
+        "word": "purple",
+        "group": "comum",
+        "own_extreme_energy": 0.31540374817588807
+      },
+      {
+        "word": "hired",
+        "group": "comum",
+        "own_extreme_energy": 0.2657045591286904
+      },
+      {
+        "word": "accused",
+        "group": "comum",
+        "own_extreme_energy": 0.256410344524854
+      },
+      {
+        "word": "competition",
+        "group": "comum",
+        "own_extreme_energy": 0.2522632678884999
+      },
+      {
+        "word": "saint",
+        "group": "comum",
+        "own_extreme_energy": 0.2489304424601034
+      },
+      {
+        "word": "suggested",
+        "group": "comum",
+        "own_extreme_energy": 0.2422524238082695
+      },
+      {
+        "word": "arguing",
+        "group": "comum",
+        "own_extreme_energy": 0.23958330750526527
+      },
+      {
+        "word": "russell",
+        "group": "comum",
+        "own_extreme_energy": 0.23867543802414423
+      },
+      {
+        "word": "subject",
+        "group": "comum",
+        "own_extreme_energy": 0.2376158297972228
+      },
+      {
+        "word": "head",
+        "group": "comum",
+        "own_extreme_energy": 0.23589679394227275
+      },
+      {
+        "word": "gun",
+        "group": "comum",
+        "own_extreme_energy": 0.23341439074550382
+      },
+      {
+        "word": "moore",
+        "group": "comum",
+        "own_extreme_energy": 0.2318654324431328
+      },
+      {
+        "word": "nicholas",
+        "group": "comum",
+        "own_extreme_energy": 0.231469671608627
+      },
+      {
+        "word": "cool",
+        "group": "comum",
+        "own_extreme_energy": 0.23109411748623032
+      },
+      {
+        "word": "unsuccessfully",
+        "group": "entidade",
+        "own_extreme_energy": 0.22941603429109939
+      }
+    ]
+  }
+}

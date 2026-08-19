@@ -1,0 +1,50 @@
+{
+  "procrustes": {
+    "n_vocab_comum": 10572,
+    "n_treino": 9572,
+    "n_heldout": 1000,
+    "cos_medio_heldout": 0.7239
+  },
+  "n_pares_cc100k": 28,
+  "n_pares_wiki100k": 24,
+  "coerencia_offsets": {
+    "cc": 0.1634,
+    "wiki": 0.1417,
+    "baseline_aleatorio": -0.0034
+  },
+  "theta_medio": {
+    "diminutivos_cc_projetados": 42.84,
+    "diminutivos_wiki": 43.26,
+    "palavras_pt_comuns": 42.21
+  },
+  "theta_cc_por_par": {
+    "casa->casinha": 43.33,
+    "gato->gatinho": 41.24,
+    "pouco->pouquinho": 42.99,
+    "amigo->amiguinho": 43.25,
+    "café->cafezinho": 42.48,
+    "beijo->beijinho": 44.01,
+    "pedaço->pedacinho": 41.45,
+    "cidade->cidadezinha": 42.5,
+    "irmã->irmãzinha": 44.5,
+    "cavalo->cavalinho": 41.79,
+    "bola->bolinha": 41.8,
+    "carro->carrinho": 44.94,
+    "barco->barquinho": 41.75,
+    "igreja->igrejinha": 43.69,
+    "escola->escolinha": 43.0,
+    "praça->pracinha": 43.66,
+    "neto->netinho": 40.82,
+    "irmão->irmãozinho": 43.85,
+    "velho->velhinho": 42.45,
+    "baixo->baixinho": 43.04,
+    "bonito->bonitinho": 43.13,
+    "filho->filhinho": 40.12,
+    "mãe->mãezinha": 41.48,
+    "hora->horinha": 42.88,
+    "jeito->jeitinho": 42.87,
+    "coisa->coisinha": 44.09,
+    "festa->festinha": 43.72,
+    "presente->presentinho": 44.54
+  }
+}

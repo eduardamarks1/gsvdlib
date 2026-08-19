@@ -1,0 +1,238 @@
+{
+  "seed": 20260819,
+  "k_top_words": 10,
+  "n_directions": 300,
+  "binned_curve": {
+    "bin_width_deg": 5.0,
+    "centers": [
+      17.5,
+      22.5,
+      27.5,
+      32.5,
+      37.5,
+      42.5,
+      47.5,
+      52.5,
+      57.5,
+      62.5,
+      67.5
+    ],
+    "mean_coherence": [
+      0.05714285714285715,
+      0.15952380952380954,
+      0.1589285714285714,
+      0.2140625,
+      0.22,
+      0.2111111111111111,
+      0.23055555555555557,
+      0.1640625,
+      0.16562500000000002,
+      0.16399999999999998,
+      0.13333333333333333
+    ],
+    "counts": [
+      7,
+      21,
+      28,
+      32,
+      35,
+      36,
+      36,
+      32,
+      32,
+      25,
+      15
+    ]
+  },
+  "peak": {
+    "center_deg": 47.5,
+    "mean_coherence": 0.23055555555555557,
+    "count": 36
+  },
+  "band_means": {
+    "theta_lt_30": 0.1464285714285714,
+    "theta_40_50": 0.22083333333333333,
+    "theta_gt_60": 0.15121951219512195
+  },
+  "corr_coherence_neg_abs_theta_minus_45": 0.2209853352154505,
+  "examples": {
+    "alta": [
+      {
+        "direction": 94,
+        "theta": 35.75448120101219,
+        "coherence": 0.7,
+        "top_pt": [
+          "humanista",
+          "catolicismo",
+          "princípios",
+          "protestantismo",
+          "ideologia",
+          "conservadora",
+          "politicamente",
+          "liberalismo",
+          "religião",
+          "marxismo"
+        ],
+        "top_en": [
+          "ideology",
+          "socialism",
+          "beliefs",
+          "catholicism",
+          "humanist",
+          "principles",
+          "liberalism",
+          "fundamentally",
+          "marxism",
+          "protestantism"
+        ]
+      },
+      {
+        "direction": 258,
+        "theta": 59.93304570868268,
+        "coherence": 0.55,
+        "top_pt": [
+          "armamento",
+          "aviões",
+          "bombardeiros",
+          "munição",
+          "aéreos",
+          "canhões",
+          "artilharia",
+          "paciente",
+          "travada",
+          "pacientes"
+        ],
+        "top_en": [
+          "ammunition",
+          "weaponry",
+          "weapons",
+          "guns",
+          "artillery",
+          "psychiatric",
+          "therapist",
+          "armament",
+          "patient",
+          "firearms"
+        ]
+      },
+      {
+        "direction": 175,
+        "theta": 47.20767326515502,
+        "coherence": 0.55,
+        "top_pt": [
+          "seguindo",
+          "estabelecimentos",
+          "segue",
+          "hotéis",
+          "habitação",
+          "seguia",
+          "restaurantes",
+          "escritórios",
+          "seguir",
+          "bebidas"
+        ],
+        "top_en": [
+          "follow",
+          "hotels",
+          "follows",
+          "restaurants",
+          "follower",
+          "beverage",
+          "beverages",
+          "liquor",
+          "amenities",
+          "cannabis"
+        ]
+      }
+    ],
+    "baixa": [
+      {
+        "direction": 20,
+        "theta": 23.46807569147853,
+        "coherence": 0.0,
+        "top_pt": [
+          "desnecessária",
+          "redundante",
+          "inclusão",
+          "automática",
+          "válida",
+          "indevida",
+          "categorização",
+          "padronização",
+          "desnecessário",
+          "actualização"
+        ],
+        "top_en": [
+          "throat",
+          "redundancy",
+          "marketing",
+          "automated",
+          "capitalization",
+          "outskirts",
+          "certifications",
+          "abdomen",
+          "spamming",
+          "accessibility"
+        ]
+      },
+      {
+        "direction": 295,
+        "theta": 68.34166046502499,
+        "coherence": 0.0,
+        "top_pt": [
+          "traças",
+          "lepidópteros",
+          "h/km²",
+          "matthews",
+          "golf",
+          "requerimento",
+          "jurisdição",
+          "shine",
+          "substâncias",
+          "galaxy"
+        ],
+        "top_en": [
+          "prohibits",
+          "obligations",
+          "unlawful",
+          "crimes",
+          "obligation",
+          "requires",
+          "amounts",
+          "offenses",
+          "jurisdictions",
+          "procedures"
+        ]
+      },
+      {
+        "direction": 298,
+        "theta": 69.09170131944502,
+        "coherence": 0.0,
+        "top_pt": [
+          "pauline",
+          "elisabeth",
+          "louise",
+          "diane",
+          "laura",
+          "hugo",
+          "pássaros",
+          "edwin",
+          "marie",
+          "judith"
+        ],
+        "top_en": [
+          "bees",
+          "sylvia",
+          "bucks",
+          "predators",
+          "audrey",
+          "capitals",
+          "amelia",
+          "sharks",
+          "laurence",
+          "hilda"
+        ]
+      }
+    ]
+  }
+}

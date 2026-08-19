@@ -1,0 +1,38 @@
+{
+  "ordenacao_por_banda": [
+    "ENxES",
+    "PTxEN",
+    "PTxES",
+    "ENxDE"
+  ],
+  "pares": {
+    "PTxEN": {
+      "n_pares_vocab": 8331,
+      "cka": 0.8512,
+      "std_theta": 13.369,
+      "frac_banda_45pm5": 0.24,
+      "P1_traducao": 0.8925
+    },
+    "PTxES": {
+      "n_pares_vocab": 6636,
+      "cka": 0.8724,
+      "std_theta": 13.479,
+      "frac_banda_45pm5": 0.24,
+      "P1_traducao": 0.97
+    },
+    "ENxES": {
+      "n_pares_vocab": 8616,
+      "cka": 0.8618,
+      "std_theta": 13.187,
+      "frac_banda_45pm5": 0.2433,
+      "P1_traducao": 0.88
+    },
+    "ENxDE": {
+      "n_pares_vocab": 7656,
+      "cka": 0.8572,
+      "std_theta": 14.086,
+      "frac_banda_45pm5": 0.22,
+      "P1_traducao": 0.8
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "pt_side": {
+    "n_direcoes": 123,
+    "lang_id_acc": 0.5683333333333334,
+    "trad_P1": 0.65,
+    "trad_P5": 0.782,
+    "analogia_top1": 0.51,
+    "analogia_top5": 0.815
+  },
+  "shared": {
+    "n_direcoes": 72,
+    "lang_id_acc": 0.5266666666666666,
+    "trad_P1": 0.672,
+    "trad_P5": 0.78,
+    "analogia_top1": 0.435,
+    "analogia_top5": 0.76
+  },
+  "en_side": {
+    "n_direcoes": 105,
+    "lang_id_acc": 0.5133333333333333,
+    "trad_P1": 0.576,
+    "trad_P5": 0.72,
+    "analogia_top1": 0.585,
+    "analogia_top5": 0.865
+  },
+  "controle_aleatorio": {
+    "n_direcoes": 72,
+    "lang_id_acc": 0.5516666666666666,
+    "trad_P1": 0.558,
+    "trad_P5": 0.712,
+    "analogia_top1": 0.37,
+    "analogia_top5": 0.7
+  }
+}
