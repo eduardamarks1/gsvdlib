@@ -36,10 +36,23 @@ def stream_top_vectors(url, top_k):
     return words, np.stack(vecs, axis=1)  # (dim, n)
 
 
+def fetch_pt_top100k():
+    """Vocabulario PT estendido (top-100k), usado na analise de diminutivos."""
+    out = CACHE / "muse_pt_top100k.npz"
+    if out.exists():
+        print("cache ja existe:", out)
+        return
+    print("baixando top 100000 vetores pt (streaming)...")
+    words, X = stream_top_vectors(VEC_URLS["pt"], 100000)
+    np.savez_compressed(out, words=np.array(words), X=X)
+    print("salvo:", out)
+
+
 def main():
     out = CACHE / f"muse_pt_en_top{TOP_K}.npz"
     if out.exists():
         print("cache ja existe:", out)
+        fetch_pt_top100k()
         return
 
     print("baixando dicionario en-pt...")
@@ -64,9 +77,11 @@ def main():
         dict_en=np.array([p[0] for p in pairs]),
         dict_pt=np.array([p[1] for p in pairs]),
     )
+    del pt, en  # fecha os handles antes de apagar (Windows)
     (CACHE / "tmp_pt.npz").unlink()
     (CACHE / "tmp_en.npz").unlink()
     print("salvo:", out)
+    fetch_pt_top100k()
 
 
 if __name__ == "__main__":
