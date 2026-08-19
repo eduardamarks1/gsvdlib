@@ -13,7 +13,7 @@ from .classify import (classify, classify_set, linear_cka,
                        metrics_from_angles, theta_angles)
 from .core import (GSVDResult, gsvd, make_A_B, make_C_S, permutation,
                    set_to_0_closest_to_45, sort_and_rebuild, wire_size)
-from .datasets import (ArrayDataset, FashionMNISTDataset, MNISTDataset,
+from .datasets import (ArrayDataset, CIFAR10Dataset, FashionMNISTDataset, MNISTDataset,
                        VectorDataset, balanced_count, center, sample_pair)
 from .lapack_gsvd import GeneralizedFactors, gsvd_factors
 from .pipeline import (PreparedPair, evaluate_pair, prepare_data,
@@ -31,6 +31,7 @@ __all__ = [
     "theta_angles", "classify", "classify_set", "metrics_from_angles",
     "linear_cka",
     "VectorDataset", "ArrayDataset", "MNISTDataset", "FashionMNISTDataset",
+    "CIFAR10Dataset",
     "sample_pair", "balanced_count", "center",
     "prepare_data", "evaluate_pair", "run_pair_experiment", "PreparedPair",
 ]

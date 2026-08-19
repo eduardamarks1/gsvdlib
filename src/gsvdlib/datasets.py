@@ -163,6 +163,78 @@ class FashionMNISTDataset(_IdxImageDataset):
 
 
 # ---------------------------------------------------------------------------
+# CIFAR-10 (python pickle batches)
+# ---------------------------------------------------------------------------
+
+class CIFAR10Dataset:
+    """CIFAR-10 natural images (10 classes, 32x32).
+
+    Downloads the official python version once (~163 MB, U. Toronto) into
+    ``data_dir`` (default ``~/.gsvdlib/cifar10``). With ``grayscale=True``
+    (default) samples are 1024-vectors (luminance); otherwise 3072-vectors
+    (flattened RGB). Values in [0, 1], samples as columns.
+    """
+
+    MIRRORS = ("https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz",)
+    NAMES = {
+        0: "Airplane", 1: "Automobile", 2: "Bird", 3: "Cat", 4: "Deer",
+        5: "Dog", 6: "Frog", 7: "Horse", 8: "Ship", 9: "Truck",
+    }
+
+    def __init__(self, data_dir: Optional[str] = None, grayscale: bool = True):
+        default = Path.home() / ".gsvdlib" / "cifar10"
+        self.data_dir = Path(data_dir) if data_dir else default
+        self.grayscale = grayscale
+        self._cache = {}
+
+    @property
+    def sample_shape(self):
+        return (32, 32) if self.grayscale else (32, 32, 3)
+
+    def _batches_dir(self) -> Path:
+        extracted = self.data_dir / "cifar-10-batches-py"
+        if not extracted.exists():
+            self.data_dir.mkdir(parents=True, exist_ok=True)
+            archive = self.data_dir / "cifar-10-python.tar.gz"
+            if not archive.exists():
+                _download(list(self.MIRRORS), archive)
+            import tarfile
+            with tarfile.open(archive, "r:gz") as tar:
+                tar.extractall(self.data_dir)
+        return extracted
+
+    def _load(self, split):
+        if split not in self._cache:
+            import pickle
+            base = self._batches_dir()
+            names = ([f"data_batch_{i}" for i in range(1, 6)]
+                     if split == "train" else ["test_batch"])
+            data, labels = [], []
+            for name in names:
+                with open(base / name, "rb") as f:
+                    batch = pickle.load(f, encoding="bytes")
+                data.append(batch[b"data"])
+                labels.extend(batch[b"labels"])
+            raw = np.vstack(data).astype(float) / 255.0   # (n, 3072) R|G|B
+            labels = np.asarray(labels, dtype=int)
+            if self.grayscale:
+                rgb = raw.reshape(-1, 3, 1024)
+                X = (0.299 * rgb[:, 0] + 0.587 * rgb[:, 1]
+                     + 0.114 * rgb[:, 2]).T                # (1024, n)
+            else:
+                X = raw.T                                   # (3072, n)
+            self._cache[split] = (X, labels)
+        return self._cache[split]
+
+    def get_class(self, label, split="train"):
+        X, labels = self._load(split)
+        return X[:, labels == label]
+
+    def class_name(self, label):
+        return str(self.NAMES.get(label, label))
+
+
+# ---------------------------------------------------------------------------
 # Generic sampling / preprocessing helpers
 # ---------------------------------------------------------------------------
 
