@@ -71,10 +71,38 @@ def _read_idx(path: Path) -> np.ndarray:
     return data.reshape(dims)
 
 
-class _IdxImageDataset:
-    """Shared implementation for the two MNIST variants."""
+def _download(urls, path: Path):
+    """Try each mirror in order; raise a helpful error if all fail."""
+    errors = []
+    for url in urls:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "gsvdlib"})
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                data = resp.read()
+            tmp = path.with_suffix(path.suffix + ".part")
+            tmp.write_bytes(data)
+            tmp.replace(path)
+            return
+        except Exception as exc:  # noqa: BLE001 - try the next mirror
+            errors.append(f"  {url}: {exc}")
+    raise RuntimeError(
+        f"Could not download {path.name} from any mirror:\n"
+        + "\n".join(errors)
+        + f"\n\nDownload the file manually (any of the URLs above) and place "
+        f"it at:\n  {path}\n(or pass data_dir=... pointing to a folder that "
+        f"already has the .gz files, e.g. the ones MLDatasets.jl downloaded)."
+    )
 
-    BASE_URL: str = ""
+
+class _IdxImageDataset:
+    """Shared implementation for the two MNIST variants.
+
+    The download only happens once per file; afterwards everything is read
+    from ``data_dir`` (default ``~/.gsvdlib/<dataset>``). If you already have
+    the IDX ``.gz`` files, pass ``data_dir`` and no network access is needed.
+    """
+
+    MIRRORS: tuple = ()
     FILES = {
         "train": ("train-images-idx3-ubyte.gz", "train-labels-idx1-ubyte.gz"),
         "test": ("t10k-images-idx3-ubyte.gz", "t10k-labels-idx1-ubyte.gz"),
@@ -94,7 +122,7 @@ class _IdxImageDataset:
             for name in (img_name, lbl_name):
                 path = self.data_dir / name
                 if not path.exists():
-                    urllib.request.urlretrieve(self.BASE_URL + name, path)
+                    _download([base + name for base in self.MIRRORS], path)
                 paths.append(path)
             imgs = _read_idx(paths[0]).astype(float) / 255.0   # (n, 28, 28)
             labels = _read_idx(paths[1]).astype(int)
@@ -115,13 +143,19 @@ class _IdxImageDataset:
 
 
 class MNISTDataset(_IdxImageDataset):
-    BASE_URL = "https://ossci-datasets.s3.amazonaws.com/mnist/"
+    MIRRORS = (
+        "https://ossci-datasets.s3.amazonaws.com/mnist/",
+        "https://storage.googleapis.com/cvdf-datasets/mnist/",
+    )
     NAMES = {i: f"Digit {i}" for i in range(10)}
 
 
 class FashionMNISTDataset(_IdxImageDataset):
-    BASE_URL = ("https://raw.githubusercontent.com/zalandoresearch/"
-                "fashion-mnist/master/data/fashion/")
+    MIRRORS = (
+        "https://raw.githubusercontent.com/zalandoresearch/"
+        "fashion-mnist/master/data/fashion/",
+        "http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/",
+    )
     NAMES = {
         0: "T-shirt/top", 1: "Trouser", 2: "Pullover", 3: "Dress", 4: "Coat",
         5: "Sandal", 6: "Shirt", 7: "Sneaker", 8: "Bag", 9: "Ankle boot",
