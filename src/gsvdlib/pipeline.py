@@ -1,0 +1,109 @@
+"""End-to-end experiment drivers (dataset-agnostic).
+
+``prepare_data`` builds the sorted GSVD base for a class pair;
+``run_pair_experiment`` reproduces the balanced classification + metrics
+pipeline from the Julia notebook for any :class:`~gsvdlib.datasets.VectorDataset`.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+import numpy as np
+
+from .classify import classify_set, linear_cka, metrics_from_angles
+from .core import GSVDResult, gsvd
+from .datasets import VectorDataset, balanced_count, center, sample_pair
+
+
+@dataclass
+class PreparedPair:
+    A: np.ndarray            # centered, samples as columns
+    B: np.ndarray
+    mean_A: np.ndarray
+    mean_B: np.ndarray
+    gsvd: GSVDResult         # already sorted
+
+
+def prepare_data(ds: VectorDataset, label_A, label_B, n_A=900, n_B=800,
+                 split="train", seed=1234) -> PreparedPair:
+    """Sample, center and decompose a class pair.
+
+    Note the transposition: the GSVD is computed on the co-span formulation,
+    so the (samples x features) matrices ``A.T`` / ``B.T`` are what is
+    decomposed, exactly as in the Julia notebook (``Our_SVD(A', B')``).
+    """
+    A, B = sample_pair(ds, label_A, label_B, n_A, n_B, split=split, seed=seed)
+    A, mean_A = center(A)
+    B, mean_B = center(B)
+    res = gsvd(A.T, B.T).sorted()
+    return PreparedPair(A=A, B=B, mean_A=mean_A, mean_B=mean_B, gsvd=res)
+
+
+def evaluate_pair(ds: VectorDataset, label_A, label_B, prep: PreparedPair,
+                  split="test", seed=4321, threshold_deg=45.0, n_test=None,
+                  verbose=True):
+    """Balanced evaluation of a prepared pair on ``split``.
+
+    Returns ``(angles_A, angles_B, overall_accuracy)``.
+    """
+    g = prep.gsvd
+    if n_test is None:
+        n_test = balanced_count(ds, label_A, label_B, split=split)
+    X_A, X_B = sample_pair(ds, label_A, label_B, n_test, n_test,
+                           split=split, seed=seed)
+
+    res_A = classify_set(X_A, "A", g.C, g.S, g.H, threshold_deg=threshold_deg)
+    res_B = classify_set(X_B, "B", g.C, g.S, g.H, threshold_deg=threshold_deg)
+
+    if verbose:
+        for label, res in ((label_A, res_A), (label_B, res_B)):
+            print(f"=== {ds.class_name(label)} ===  "
+                  f"{res.hits}/{res.total} correct "
+                  f"({100 * res.accuracy:.2f}%), "
+                  f"mean θ = {res.mean_angle:.2f}° "
+                  f"(σ = {res.std_angle:.2f}°)")
+
+    overall = (res_A.hits + res_B.hits) / (res_A.total + res_B.total)
+    if verbose:
+        print(f"Overall accuracy: {100 * overall:.2f}%")
+    return res_A.angles, res_B.angles, overall
+
+
+def run_pair_experiment(ds: VectorDataset, pairs, n_A=900, n_B=800,
+                        base_split="train", test_split="test",
+                        base_seed=1234, test_seed=4321,
+                        threshold_deg=45.0, verbose=True):
+    """Run the full balanced pipeline for several class pairs.
+
+    Returns ``(rows, angle_data)`` where ``rows`` is a list of per-class
+    metric dicts (pair, class, precision, recall, f1, accuracy_overall, cka)
+    ready for ``pandas.DataFrame(rows)``, and ``angle_data`` maps each pair
+    to its ``(angles_A, angles_B)``. No global accumulators.
+    """
+    rows = []
+    angle_data = {}
+    for label_A, label_B in pairs:
+        if verbose:
+            print(f"\n>>> Pair: {ds.class_name(label_A)} vs {ds.class_name(label_B)}")
+        prep = prepare_data(ds, label_A, label_B, n_A=n_A, n_B=n_B,
+                            split=base_split, seed=base_seed)
+        angles_A, angles_B, _ = evaluate_pair(
+            ds, label_A, label_B, prep, split=test_split, seed=test_seed,
+            threshold_deg=threshold_deg, verbose=verbose)
+        angle_data[(label_A, label_B)] = (angles_A, angles_B)
+
+        cka = linear_cka(prep.A, prep.B)
+        m = metrics_from_angles(angles_A, angles_B,
+                                theta_threshold_deg=threshold_deg)
+        for cls, side in ((label_A, "A"), (label_B, "B")):
+            rows.append({
+                "pair": f"{label_A} vs {label_B}",
+                "class": ds.class_name(cls),
+                "precision": m[f"precision_{side}"],
+                "recall": m[f"recall_{side}"],
+                "f1": m[f"f1_{side}"],
+                "accuracy_overall": m["accuracy"],
+                "cka": cka,
+            })
+    return rows, angle_data
