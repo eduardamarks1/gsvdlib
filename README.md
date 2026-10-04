@@ -68,7 +68,7 @@ from gsvdlib import MNISTDataset, prepare_data, evaluate_pair, run_pair_experime
 
 ds = MNISTDataset()
 prep = prepare_data(ds, 4, 9, n_A=900, n_B=800)      # sample, center, gsvd().sorted()
-angles_A, angles_B, acc = evaluate_pair(ds, 4, 9, prep)
+angles_A, angles_B, acc = evaluate_pair(ds, 4, 9, prep)  # test samples centered too
 
 rows, angle_data = run_pair_experiment(ds, [(1, 5), (0, 7), (4, 9), (3, 9)])
 # pandas.DataFrame(rows) -> precision / recall / F1 / accuracy / linear CKA
@@ -76,6 +76,20 @@ rows, angle_data = run_pair_experiment(ds, [(1, 5), (0, 7), (4, 9), (3, 9)])
 
 θ(z) is computed by `theta_angles` / `classify` / `classify_set`
 (vectorized least squares, restricted to col(A) ∩ col(B) by default).
+
+**Centering.** By default (`centering="pooled"`) A, B and every new sample z
+are centered by the same vector, the mean of A and B together
+(`prep.center_test`). Subtract it from your own samples before calling
+`theta_angles`:
+
+```python
+Z = ds.get_class(4, "test")[:, :5] - prep.center_test[:, None]
+theta_angles(Z, prep.gsvd.C, prep.gsvd.S, prep.gsvd.H)
+```
+
+`centering="per_class"` reproduces the ICLR 2026 protocol (A and B each
+centered by their own mean, new samples left uncentered). On the four MNIST
+pairs the two protocols differ by less than one point of accuracy.
 
 ## Generic plots
 
@@ -88,7 +102,7 @@ from gsvdlib.plots import (ImageRenderer, LineRenderer, plot_samples,
                            plot_posterior, animate_components)
 
 r28 = ImageRenderer((28, 28))
-plot_samples(prep.A, r28, k=20, mean=prep.mean_A)
+plot_samples(prep.A, r28, k=20, mean=prep.center_A)
 plot_angle_histogram(angles_A, angles_B, "Digit 4", "Digit 9")
 plot_posterior(angles_A, angles_B, "Digit 4", "Digit 9")
 animate_components(prep.gsvd.H.T, r28, save="H.gif")
