@@ -3,6 +3,7 @@ import numpy as np
 from gsvdlib import (ArrayDataset, classify, classify_set, evaluate_pair, gsvd,
                      linear_cka, metrics_from_angles, prepare_data,
                      run_pair_experiment, theta_angles)
+from gsvdlib.classify import DEFAULT_RCOND
 from gsvdlib.datasets import sample_pair
 
 RNG = np.random.default_rng(7)
@@ -126,3 +127,31 @@ def test_unknown_centering_rejected():
     except ValueError:
         return
     raise AssertionError("expected ValueError")
+
+
+def test_truncation_matches_explicit_pinv():
+    ds = synthetic_dataset()
+    prep = prepare_data(ds, "a", "b", n_A=80, n_B=80, seed=1)
+    g = prep.gsvd
+    X = prep.A[:, :10]
+    from gsvdlib.blocks import to_intersection
+    Ci, Si = to_intersection(g.C, g.S)
+    c = np.linalg.pinv(g.H.T, rcond=DEFAULT_RCOND) @ X
+    expected = np.degrees(np.arctan2(np.linalg.norm(Si @ c, axis=0),
+                                     np.linalg.norm(Ci @ c, axis=0)))
+    assert np.allclose(theta_angles(X, g.C, g.S, g.H), expected)
+
+
+def test_truncation_tames_out_of_distribution_features():
+    """Energy in a feature the training data never used must not take over theta."""
+    ds = synthetic_dataset()
+    prep = prepare_data(ds, "a", "b", n_A=80, n_B=80, seed=1)
+    g = prep.gsvd
+    x = prep.A[:, :1].copy()
+    # direction of H's smallest singular value: almost unseen in training
+    U, _, _ = np.linalg.svd(g.H.T, full_matrices=False)
+    spike = U[:, -1:] * np.linalg.norm(x)
+    t_clean = theta_angles(x, g.C, g.S, g.H)[0]
+    t_trunc = theta_angles(x + spike, g.C, g.S, g.H)[0]
+    t_plain = theta_angles(x + spike, g.C, g.S, g.H, rcond=None)[0]
+    assert abs(t_trunc - t_clean) < abs(t_plain - t_clean) + 1e-9

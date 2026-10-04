@@ -9,14 +9,25 @@ from scipy.linalg import lstsq
 
 from .blocks import to_intersection
 
+#: Relative cutoff of the truncated pseudo-inverse used for c = H^+ z: singular
+#: values of H below ``DEFAULT_RCOND * s_max`` are dropped. Chosen on held-out
+#: validation images (examples/truncation_validation.py: 8 MNIST/Fashion-MNIST
+#: pairs x 5 draws); it raised test AUC in all 40 runs. Re-validate it for data
+#: of a different kind.
+DEFAULT_RCOND = 0.05
 
-def theta_angles(X, C, S, H, restrict_to_intersection=True):
+
+def theta_angles(X, C, S, H, restrict_to_intersection=True, rcond=DEFAULT_RCOND):
     """Alignment angle theta(z) (degrees) for each column of ``X``.
 
-    Solves ``H.T @ c = x`` in the least-squares sense for all columns at
-    once, then ``theta = atan2(||S c||, ||C c||)``. By default ``C`` and
-    ``S`` are first restricted to col(A) intersect col(B) (the thesis
-    hypothesis), matching the Julia pipeline.
+    Solves ``H.T @ c = x`` with a truncated pseudo-inverse for all columns at
+    once, then ``theta = atan2(||S c||, ||C c||)``. ``H`` is ill-conditioned:
+    features that barely vary in training give tiny singular values, and
+    without truncation any energy of x there blows ``c`` up and dominates
+    theta. ``rcond`` drops singular values below ``rcond * s_max``;
+    ``rcond=None`` gives the plain least-squares solution of the ICLR 2026
+    paper and the Julia notebook. By default ``C`` and ``S`` are first
+    restricted to col(A) intersect col(B) (the thesis hypothesis).
     """
     X = np.atleast_2d(np.asarray(X, dtype=float))
     if X.shape[0] == 1 and H.shape[1] != 1:  # a single vector passed as 1-D
@@ -24,7 +35,7 @@ def theta_angles(X, C, S, H, restrict_to_intersection=True):
     if restrict_to_intersection:
         C, S = to_intersection(C, S)
 
-    coeffs, *_ = lstsq(np.asarray(H).T, X)
+    coeffs, *_ = lstsq(np.asarray(H).T, X, cond=rcond)
     wA = C @ coeffs
     wB = S @ coeffs
     nA = np.linalg.norm(wA, axis=0)
@@ -32,9 +43,10 @@ def theta_angles(X, C, S, H, restrict_to_intersection=True):
     return np.degrees(np.arctan2(nB, nA))
 
 
-def classify(v, label_A, label_B, C, S, H, threshold_deg=45.0):
+def classify(v, label_A, label_B, C, S, H, threshold_deg=45.0, rcond=DEFAULT_RCOND):
     """Classify one vector: returns ``(predicted_label, theta_deg)``."""
-    theta = float(theta_angles(np.asarray(v, dtype=float).reshape(-1, 1), C, S, H)[0])
+    theta = float(theta_angles(np.asarray(v, dtype=float).reshape(-1, 1), C, S, H,
+                               rcond=rcond)[0])
     return (label_B if theta > threshold_deg else label_A), theta
 
 
@@ -48,7 +60,8 @@ class SetResult:
     std_angle: float
 
 
-def classify_set(X, expected_side, C, S, H, threshold_deg=45.0) -> SetResult:
+def classify_set(X, expected_side, C, S, H, threshold_deg=45.0,
+                 rcond=DEFAULT_RCOND) -> SetResult:
     """Classify every column of ``X`` assuming they all belong to one side.
 
     ``expected_side`` is ``"A"`` (predict A iff theta < threshold) or
@@ -56,7 +69,7 @@ def classify_set(X, expected_side, C, S, H, threshold_deg=45.0) -> SetResult:
     """
     if expected_side not in ("A", "B"):
         raise ValueError("expected_side must be 'A' or 'B'")
-    angles = theta_angles(X, C, S, H)
+    angles = theta_angles(X, C, S, H, rcond=rcond)
     if expected_side == "A":
         hits = int(np.count_nonzero(angles < threshold_deg))
     else:

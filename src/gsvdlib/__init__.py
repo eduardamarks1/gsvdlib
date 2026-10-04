@@ -9,7 +9,7 @@ from .angles import (cosine_similarity, get_angles_C, get_angles_S,
                      get_most_similar_row_H, get_nonzero_per_column,
                      highlight_closest)
 from .blocks import infer_block_sizes, to_intersection, zero_pure_blocks
-from .classify import (classify, classify_set, linear_cka,
+from .classify import (DEFAULT_RCOND, classify, classify_set, linear_cka,
                        metrics_from_angles, theta_angles)
 from .core import (GSVDResult, gsvd, make_A_B, make_C_S, permutation,
                    set_to_0_closest_to_45, sort_and_rebuild, wire_size)
@@ -28,7 +28,7 @@ __all__ = [
     "infer_block_sizes", "zero_pure_blocks", "to_intersection",
     "get_nonzero_per_column", "get_angles_C", "get_angles_S",
     "highlight_closest", "cosine_similarity", "get_most_similar_row_H",
-    "theta_angles", "classify", "classify_set", "metrics_from_angles",
+    "theta_angles", "classify", "classify_set", "metrics_from_angles", "DEFAULT_RCOND",
     "linear_cka",
     "VectorDataset", "ArrayDataset", "MNISTDataset", "FashionMNISTDataset",
     "CIFAR10Dataset",

@@ -87,9 +87,22 @@ Z = ds.get_class(4, "test")[:, :5] - prep.center_test[:, None]
 theta_angles(Z, prep.gsvd.C, prep.gsvd.S, prep.gsvd.H)
 ```
 
+**Truncated pseudo-inverse.** θ(z) needs c = H⁺z, and H is ill-conditioned:
+features that barely vary in training (border pixels, for instance) give tiny
+singular values, and any energy of z there blows c up and takes over θ.
+`theta_angles` therefore drops singular values below `rcond · s_max`, with
+`DEFAULT_RCOND = 0.05`. The value was chosen on held-out validation images
+(`examples/truncation_validation.py`: 8 MNIST / Fashion-MNIST pairs × 5 draws)
+and raised the test AUC in all 40 runs, e.g. MNIST 4 vs 9 from 0.970 to 0.995.
+It keeps roughly the 150 strongest of ~540 directions, so it is a real
+regularisation, not a numerical safeguard; re-validate it for other kinds of
+data. `rcond=None` gives the plain least-squares solution used in the paper.
+
 `centering="per_class"` reproduces the ICLR 2026 protocol (A and B each
 centered by their own mean, new samples left uncentered). On the four MNIST
-pairs the two protocols differ by less than one point of accuracy.
+pairs the two protocols differ by less than one point of accuracy. To
+reproduce the published tables use both `centering="per_class"` and
+`rcond=None`.
 
 ## Generic plots
 

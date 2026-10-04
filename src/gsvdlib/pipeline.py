@@ -11,7 +11,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from .classify import classify_set, linear_cka, metrics_from_angles
+from .classify import DEFAULT_RCOND, classify_set, linear_cka, metrics_from_angles
 from .core import GSVDResult, gsvd
 from .datasets import VectorDataset, balanced_count, center, sample_pair
 
@@ -69,11 +69,12 @@ def prepare_data(ds: VectorDataset, label_A, label_B, n_A=900, n_B=800,
 
 def evaluate_pair(ds: VectorDataset, label_A, label_B, prep: PreparedPair,
                   split="test", seed=4321, threshold_deg=45.0, n_test=None,
-                  verbose=True):
+                  verbose=True, rcond=DEFAULT_RCOND):
     """Balanced evaluation of a prepared pair on ``split``.
 
     Test samples are centered with ``prep.center_test``, i.e. in the same
-    frame as the decomposition (the pooled mean by default).
+    frame as the decomposition (the pooled mean by default). ``rcond`` is the
+    pseudo-inverse truncation passed to :func:`~gsvdlib.classify.theta_angles`.
 
     Returns ``(angles_A, angles_B, overall_accuracy)``.
     """
@@ -85,8 +86,8 @@ def evaluate_pair(ds: VectorDataset, label_A, label_B, prep: PreparedPair,
     X_A = X_A - prep.center_test[:, None]
     X_B = X_B - prep.center_test[:, None]
 
-    res_A = classify_set(X_A, "A", g.C, g.S, g.H, threshold_deg=threshold_deg)
-    res_B = classify_set(X_B, "B", g.C, g.S, g.H, threshold_deg=threshold_deg)
+    res_A = classify_set(X_A, "A", g.C, g.S, g.H, threshold_deg=threshold_deg, rcond=rcond)
+    res_B = classify_set(X_B, "B", g.C, g.S, g.H, threshold_deg=threshold_deg, rcond=rcond)
 
     if verbose:
         for label, res in ((label_A, res_A), (label_B, res_B)):
@@ -105,10 +106,12 @@ def evaluate_pair(ds: VectorDataset, label_A, label_B, prep: PreparedPair,
 def run_pair_experiment(ds: VectorDataset, pairs, n_A=900, n_B=800,
                         base_split="train", test_split="test",
                         base_seed=1234, test_seed=4321,
-                        threshold_deg=45.0, verbose=True, centering="pooled"):
+                        threshold_deg=45.0, verbose=True, centering="pooled",
+                        rcond=DEFAULT_RCOND):
     """Run the full balanced pipeline for several class pairs.
 
-    ``centering`` is passed to :func:`prepare_data`. Linear CKA is always
+    ``centering`` is passed to :func:`prepare_data` and ``rcond`` to
+    :func:`evaluate_pair`. Linear CKA is always
     computed on each set centered by its own mean, so it does not depend on
     the centering chosen for theta.
 
@@ -127,7 +130,7 @@ def run_pair_experiment(ds: VectorDataset, pairs, n_A=900, n_B=800,
                             centering=centering)
         angles_A, angles_B, _ = evaluate_pair(
             ds, label_A, label_B, prep, split=test_split, seed=test_seed,
-            threshold_deg=threshold_deg, verbose=verbose)
+            threshold_deg=threshold_deg, verbose=verbose, rcond=rcond)
         angle_data[(label_A, label_B)] = (angles_A, angles_B)
 
         cka = linear_cka(center(prep.A)[0], center(prep.B)[0])
